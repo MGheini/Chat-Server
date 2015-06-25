@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Chat</title>
+    <link rel="stylesheet" type="text/css" href="static/semantic/semantic.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/style.css" />
+</head>
+<body>
+    <div id="container" class="ui grid">
+        <div id="friends-list" class="five wide column">
+            <div class="ui raised stacked segment" id="user-info">
+                <h2 class="ui icon center aligned header">
+                    <img src="static/avatars/5.jpg" class="ui circular image">
+                    <div class="content">
+                        Welcome, Jane Doe!
+                        <div class="sub header">@janedoe</div>
+                    </div>
+                </h2>
+            </div>
+            <div class="ui vertical menu left" id="roster">
+                <div class="item">
+                    <div class="ui transparent icon input">
+                        <input type="text" placeholder="Add a friend...">
+                        <i class="user icon"></i>
+                    </div>
+                </div>
+                <a class="active green item">
+                    sadjad
+                </a>
+                <a class="active green item">
+                    janedoe
+                    <div class="ui blue label">1</div>
+                </a>
+                <a class="blue item">
+                    johnsmith
+                </a>
+                <a class="blue item">
+                    erlich
+                </a>
+                <a class="blue item">
+                    jian.yang
+                </a>
+            </div>
+        </div>
+
+        <div id="messages-pane" class="eleven wide column">
+            <div id="message-header">
+                <h2 class="ui header">
+                    <i class="comments icon"></i>
+                    <div class="content">
+                        Conversation with @sadjad
+                        <div class="sub header">Online</div>
+                    </div>
+                </h2>
+            </div>
+
+            <div id="messages">
+                <div class="ui minimal comments">
+                    <div class="comment">
+                        <a class="avatar">
+                            <img src="static/avatars/1.jpg">
+                        </a>
+                        <div class="content">
+                            <a class="author">Sadjad</a>
+                            <div class="metadata">
+                                <span class="date">Today at 5:42PM</span>
+                            </div>
+                            <div class="text">
+                                Jane, did you see the project definition?
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <a class="avatar">
+                            <img src="static/avatars/5.jpg">
+                        </a>
+                        <div class="content">
+                            <a class="author">Jane</a>
+                            <div class="metadata">
+                                <span class="date">Today at 6:44PM</span>
+                            </div>
+                            <div class="text">
+                                No.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <a class="avatar">
+                            <img src="static/avatars/1.jpg">
+                        </a>
+                        <div class="content">
+                            <a class="author">Sadjad</a>
+                            <div class="metadata">
+                                <span class="date">Today at 6:45PM</span>
+                            </div>
+                            <div class="text">
+                                It's about creating a chat system, like Viber or Telegram! Seems pretty interesting.
+                                Do you already have a group?
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <a class="avatar">
+                            <img src="static/avatars/5.jpg">
+                        </a>
+                        <div class="content">
+                            <a class="author">Jane</a>
+                            <div class="metadata">
+                                <span class="date">Today at 8:44PM</span>
+                            </div>
+                            <div class="text">
+                                No.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <a class="avatar">
+                            <img src="static/avatars/1.jpg">
+                        </a>
+                        <div class="content">
+                            <a class="author">Sadjad</a>
+                            <div class="metadata">
+                                <span class="date">Today at Today at 8:45PM</span>
+                            </div>
+                            <div class="text">
+                                Oh! So, how about we do this project together? :)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <a class="avatar">
+                            <img src="static/avatars/5.jpg">
+                        </a>
+                        <div class="content">
+                            <a class="author">Jane</a>
+                            <div class="metadata">
+                                <span class="date">Today at 10:21PM</span>
+                            </div>
+                            <div class="text">
+                                No.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <a class="avatar">
+                            <img src="static/avatars/1.jpg">
+                        </a>
+                        <div class="content">
+                            <a class="author">Sadjad</a>
+                            <div class="metadata">
+                                <span class="date">Today at 10:22PM</span>
+                            </div>
+                            <div class="text">
+                                Do you really know any other words, other than 'no'?
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <a class="avatar">
+                            <img src="static/avatars/5.jpg">
+                        </a>
+                        <div class="content">
+                            <a class="author">Jane</a>
+                            <div class="metadata">
+                                <span class="date">Today at 11:00PM</span>
+                            </div>
+                            <div class="text">
+                                No.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <a class="avatar">
+                            <img src="static/avatars/1.jpg">
+                        </a>
+                        <div class="content">
+                            <a class="author">Sadjad</a>
+                            <div class="metadata">
+                                <span class="date">Today at 11:01PM</span>
+                            </div>
+                            <div class="text">
+                                Tell me if you changed your mind.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <a class="avatar">
+                            <img src="static/avatars/5.jpg">
+                        </a>
+                        <div class="content">
+                            <a class="author">Jane</a>
+                            <div class="metadata">
+                                <span class="date">Today at 11:49PM</span>
+                            </div>
+                            <div class="text">
+                                I won't.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="message-form-container">
+                <form class="ui form">
+                    <div class="ui action input">
+                        <input type="text" placeholder="Your message here..." dir="auto">
+                        <div class="ui green icon button">
+                            <i class="send icon"></i> &nbsp;Send
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="static/js/jquery-2.1.4.min.js"></script>
+    <script src="static/semantic/semantic.min.js"></script>
+</body>
+</html>
