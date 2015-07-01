@@ -279,12 +279,14 @@
     document.getElementById('new-friend').onkeypress = function(e) {
         if (!e) e = window.event;
         if (e.keyCode == '13') {
-            var friendshipObject = {
-                username: username.value,
-                friend: this.value
+            if (this.value) {
+                var friendshipObject = {
+                    username: username.value,
+                    friend: this.value
+                }
+                this.value = "";
+                socket.emit('add friend', friendshipObject);
             }
-            this.value = "";
-            socket.emit('add friend', friendshipObject);
             return false;
         }
     }
