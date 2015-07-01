@@ -67,7 +67,7 @@
             <h2 class="ui header">
                 <i class="comments icon"></i>
                 <div class="content">
-                    Conversation with @sadjad
+                    Conversation with @<span id="receiver">sadjad</span>
                     <div class="sub header">Online</div>
                 </div>
             </h2>
@@ -231,8 +231,8 @@
         <div id="message-form-container">
             <form class="ui form">
                 <div class="ui action input">
-                    <input type="text" placeholder="Your message here..." dir="auto">
-                    <div class="ui green icon button">
+                    <input id="message-text" type="text" placeholder="Your message here..." dir="auto">
+                    <div id="send" class="ui green icon button">
                         <i class="send icon"></i> &nbsp;Send
                     </div>
                 </div>
@@ -252,7 +252,6 @@
     $('#login').click(function() {
         $('.modal').modal('hide');
         var userDataObject = {
-            // fullName: fullName.value,
             username: username.value
         }
         document.getElementById('welcome-msg').innerHTML = "Welcome, " + fullName.value + "!";
@@ -260,6 +259,22 @@
         
         socket.emit('login', userDataObject);
     });
+
+    $('#send').click(function(){
+        var receiverUsername = document.getElementById('receiver');
+        var messageText = document.getElementById('message-text');
+
+        if (messageText.value) {
+            var messageObject = {
+                sender: username.value,
+                receiver: receiverUsername.innerHTML,
+                messageText: messageText.value
+            }
+            messageText.value = "";
+            socket.emit('send message', messageObject);
+        }
+    });
+
 </script>
 </body>
 </html>
