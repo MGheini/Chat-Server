@@ -250,6 +250,7 @@
     var username = document.getElementById('username');
 
     $('#login').click(function() {
+        $('.modal').modal('hide');
         var userDataObject = {
             // fullName: fullName.value,
             username: username.value
@@ -258,7 +259,6 @@
         document.getElementById('display-username').innerHTML = "@" + username.value;
         
         socket.emit('login', userDataObject);
-        $('.modal').toggleClass('active');
     });
 </script>
 </body>
