@@ -22,8 +22,14 @@ io.on('connection', function(socket) {
 		// console.log(object.messageText);
 		// console.log(object.sender);
 		// console.log(object.receiver);
-		messages.push([object.sender, object.receiver, object.messageText]);
+		messages.push([object.sender, object.receiver, object.messageText, object.datetime]);
 		console.log(messages);
+	}); 
+	socket.on('add friend', function(object) {
+		// console.log(object.username);
+		// console.log(object.friend);
+		friendships.push([object.username, object.friend]);
+		console.log(friendships);
 	});
 });
 
