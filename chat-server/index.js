@@ -4,6 +4,8 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var users = {};
+var friendships = [];
+var messages = [];
 
 app.use('/static', express.static(__dirname + '/static'));
 
@@ -13,13 +15,15 @@ app.get('/', function(req, res) {
 
 io.on('connection', function(socket) {
 	socket.on('login', function(object) {
-		var user = {
-			username: object.username,
-			friends: [],
-			messages: []
-		}
 		console.log(object.username);
 		users[object.username] = socket;
+	});
+	socket.on('send message', function(object) {
+		// console.log(object.messageText);
+		// console.log(object.sender);
+		// console.log(object.receiver);
+		messages.push([object.sender, object.receiver, object.messageText]);
+		console.log(messages);
 	});
 });
 
