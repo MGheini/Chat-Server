@@ -10,26 +10,44 @@ var messages = [];
 app.use('/static', express.static(__dirname + '/static'));
 
 app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/index.html')
+	res.sendFile(__dirname + '/index.html');
 });
 
 io.on('connection', function(socket) {
 	socket.on('login', function(object) {
-		console.log(object.username);
-		users[object.username] = socket;
+		if (object.username in users) {
+			users[object.username] = socket;
+			var userFriends = [];
+			for (i = 0; i < friendships.length; i++) {
+				if (friendships[i][0] === object.username)
+					userFriends.push({friend: friendships[i][1], status: users[friendships[i][1]] === null ? false:true});
+				if (friendships[i][1] === object.username && users[friendships[i][0]])
+					users[friendships[i][0]].emit('online friend', {friend: object.username});
+			}
+			socket.emit('login', {friends: userFriends});
+		}
+		else {
+			users[object.username] = socket;
+		}
 	});
 	socket.on('send message', function(object) {
-		// console.log(object.messageText);
-		// console.log(object.sender);
-		// console.log(object.receiver);
 		messages.push([object.sender, object.receiver, object.messageText, object.datetime]);
-		console.log(messages);
 	}); 
 	socket.on('add friend', function(object) {
-		// console.log(object.username);
-		// console.log(object.friend);
-		friendships.push([object.username, object.friend]);
-		console.log(friendships);
+		if (object.friend in users) {
+			friendships.push([object.username, object.friend]);
+			socket.emit('added friend', {friend: object.friend, status: users[object.friend] === null ? false:true});
+		}
+		else {
+			socket.emit('no such member');
+		}
+	});
+	socket.on('logout', function(object) {
+		users[object.username] = null;
+		for (i = 0; i < friendships.length; i++) {
+			if (friendships[i][1] === object.username && users[friendships[i][0]])
+				users[friendships[i][0]].emit('offline friend', {friend: object.username});
+		}
 	});
 });
 

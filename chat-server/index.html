@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="static/css/style.css" />
 </head>
 <body>
-    <div class="ui small test visible active modal transition" style="margin-top: -120px;">
+    <div class="ui small test visible active modal" style="margin-top: -120px;">
         <div class="header">
           View Your Account
       </div>
@@ -25,14 +25,20 @@
     </div>
 </div>
 
+<div id="error-msg" class="ui negative message" style="width: 500px; margin: auto; margin-top: 20px; visibility: hidden;">
+  <div class="header" style="text-align: center;">
+    Sorry, but no member with the entered username was found
+</div>
+</div>
+
 <div id="container" class="ui grid">
     <div id="friends-list" class="five wide column">
         <div class="ui raised stacked segment" id="user-info">
             <h2 class="ui icon center aligned header">
                 <img src="static/avatars/5.jpg" class="ui circular image">
-                <div  class="content">
-                    <h2 id="welcome-msg">Welcome, Jane Doe!</h2>
-                    <div id="display-username" class="sub header">@janedoe</div>
+                <div class="content">
+                    <h2 id="welcome-msg">Welcome!</h2>
+                    <div id="display-username" class="sub header"></div>
                 </div>
             </h2>
         </div>
@@ -43,22 +49,6 @@
                     <i class="user icon"></i>
                 </div>
             </div>
-            <a class="active green item">
-                sadjad
-            </a>
-            <a class="active green item">
-                janedoe
-                <div class="ui blue label">1</div>
-            </a>
-            <a class="blue item">
-                johnsmith
-            </a>
-            <a class="blue item">
-                erlich
-            </a>
-            <a class="blue item">
-                jian.yang
-            </a>
         </div>
     </div>
 
@@ -67,8 +57,8 @@
             <h2 class="ui header">
                 <i class="comments icon"></i>
                 <div class="content">
-                    Conversation with @<span id="receiver">sadjad</span>
-                    <div class="sub header">Online</div>
+                    Conversation with @<span id="receiver"></span>
+                    <div class="sub header"></div>
                 </div>
             </h2>
         </div>
@@ -86,142 +76,6 @@
                         </div>
                         <div class="text">
                             Jane, did you see the project definition?
-                        </div>
-                    </div>
-                </div>
-
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="static/avatars/5.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">Jane</a>
-                        <div class="metadata">
-                            <span class="date">Today at 6:44PM</span>
-                        </div>
-                        <div class="text">
-                            No.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="static/avatars/1.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">Sadjad</a>
-                        <div class="metadata">
-                            <span class="date">Today at 6:45PM</span>
-                        </div>
-                        <div class="text">
-                            It's about creating a chat system, like Viber or Telegram! Seems pretty interesting.
-                            Do you already have a group?
-                        </div>
-                    </div>
-                </div>
-
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="static/avatars/5.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">Jane</a>
-                        <div class="metadata">
-                            <span class="date">Today at 8:44PM</span>
-                        </div>
-                        <div class="text">
-                            No.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="static/avatars/1.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">Sadjad</a>
-                        <div class="metadata">
-                            <span class="date">Today at Today at 8:45PM</span>
-                        </div>
-                        <div class="text">
-                            Oh! So, how about we do this project together? :)
-                        </div>
-                    </div>
-                </div>
-
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="static/avatars/5.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">Jane</a>
-                        <div class="metadata">
-                            <span class="date">Today at 10:21PM</span>
-                        </div>
-                        <div class="text">
-                            No.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="static/avatars/1.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">Sadjad</a>
-                        <div class="metadata">
-                            <span class="date">Today at 10:22PM</span>
-                        </div>
-                        <div class="text">
-                            Do you really know any other words, other than 'no'?
-                        </div>
-                    </div>
-                </div>
-
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="static/avatars/5.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">Jane</a>
-                        <div class="metadata">
-                            <span class="date">Today at 11:00PM</span>
-                        </div>
-                        <div class="text">
-                            No.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="static/avatars/1.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">Sadjad</a>
-                        <div class="metadata">
-                            <span class="date">Today at 11:01PM</span>
-                        </div>
-                        <div class="text">
-                            Tell me if you changed your mind.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="static/avatars/5.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">Jane</a>
-                        <div class="metadata">
-                            <span class="date">Today at 11:49PM</span>
-                        </div>
-                        <div class="text">
-                            I won't.
                         </div>
                     </div>
                 </div>
@@ -260,6 +114,19 @@
         socket.emit('login', userDataObject);
     });
 
+    socket.on('login', function(object) {
+        for (i = 0; i < object.friends.length; i++) {
+            var friendItem = document.createElement('a');
+            if (object.friends[i].status === true)
+                friendItem.className = 'active green item';
+            else
+                friendItem.className = 'blue item';
+            var friendId = document.createTextNode(object.friends[i].friend);
+            friendItem.appendChild(friendId);
+            document.getElementById('roster').appendChild(friendItem);
+        }
+    });
+
     $('#send').click(function(){
         var receiverUsername = document.getElementById('receiver');
         var messageText = document.getElementById('message-text');
@@ -291,6 +158,47 @@
         }
     }
 
+    socket.on('added friend', function(object) {
+        var friend = document.createElement('a');
+        if (object.status === true)
+            friend.className = 'active green item';
+        else
+            friend.className = 'blue item';
+        var friendId = document.createTextNode(object.friend);
+        friend.appendChild(friendId);
+        document.getElementById('roster').appendChild(friend);
+    });
+
+    socket.on('no such member', function() {
+        var error = document.getElementById('error-msg');
+        error.style.visibility = 'visible';
+        setTimeout(function() {
+            error.style.visibility = 'hidden';
+        }, 3000);
+    });
+
+    socket.on('online friend', function(object) {
+        $( 'a.blue.item' ).each( function(){
+            if ($( this ).text() === object.friend) {
+                $ ( this ).attr('class', 'active green item');
+            }
+        });
+    });
+
+    socket.on('offline friend', function(object) {
+        $( 'a.green.item' ).each( function(){
+            if ($( this ).text() === object.friend) {
+                $( this ).attr('class', 'blue item');
+            }
+        });
+    });    
+
+    $(window).on("beforeunload", function(object) { 
+        var userDataObject = {
+            username: username.value
+        }
+        socket.emit('logout', userDataObject);
+    });
 </script>
 </body>
 </html>
