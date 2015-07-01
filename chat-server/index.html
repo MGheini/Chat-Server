@@ -39,7 +39,7 @@
         <div class="ui vertical menu left" id="roster">
             <div class="item">
                 <div class="ui transparent icon input">
-                    <input type="text" placeholder="Add a friend...">
+                    <input id="new-friend" type="text" placeholder="Add a friend...">
                     <i class="user icon"></i>
                 </div>
             </div>
@@ -268,12 +268,26 @@
             var messageObject = {
                 sender: username.value,
                 receiver: receiverUsername.innerHTML,
-                messageText: messageText.value
+                messageText: messageText.value,
+                datetime: new Date().toUTCString()
             }
             messageText.value = "";
             socket.emit('send message', messageObject);
         }
     });
+
+    document.getElementById('new-friend').onkeypress = function(e) {
+        if (!e) e = window.event;
+        if (e.keyCode == '13') {
+            var friendshipObject = {
+                username: username.value,
+                friend: this.value
+            }
+            this.value = "";
+            socket.emit('add friend', friendshipObject);
+            return false;
+        }
+    }
 
 </script>
 </body>
