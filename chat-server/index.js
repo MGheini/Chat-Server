@@ -26,7 +26,6 @@ io.on('connection', function(socket) {
 				if (friendships[i][1] === object.username && users[friendships[i][0]])
 					users[friendships[i][0]].emit('online friend', {friend: object.username});
 			}
-			console.log("time data: " + usersTimeData);
 			socket.emit('login', {friends: userFriends, lastOnline: usersTimeData});
 		}
 		else {
@@ -46,7 +45,7 @@ io.on('connection', function(socket) {
 	socket.on('add friend', function(object) {
 		if (object.friend in users && !contains(friendships, [object.username, object.friend])) {
 			friendships.push([object.username, object.friend]);
-			socket.emit('added friend', {friend: object.friend, status: users[object.friend] === null ? false:true, lastOnline: usersTimeData});
+			socket.emit('added friend', {friend: object.friend, status: users[object.friend] === null ? false:true});
 		}
 		else if (!object.friend in users) {
 			socket.emit('no such member');
@@ -86,9 +85,7 @@ io.on('connection', function(socket) {
 
 	socket.on('logout', function(object) {
 		users[object.username] = null;
-
 		usersTimeData[object.username] = new Date().toUTCString();
-		
 		for (i = 0; i < friendships.length; i++) {
 			if (friendships[i][1] === object.username && users[friendships[i][0]])
 				users[friendships[i][0]].emit('offline friend', {friend: object.username, lastOnline: usersTimeData});
