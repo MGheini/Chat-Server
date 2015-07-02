@@ -14,6 +14,7 @@ app.get('/', function(req, res) {
 });
 
 io.on('connection', function(socket) {
+
 	socket.on('login', function(object) {
 		if (object.username in users) {
 			users[object.username] = socket;
@@ -30,18 +31,57 @@ io.on('connection', function(socket) {
 			users[object.username] = socket;
 		}
 	});
-	socket.on('send message', function(object) {
-		messages.push([object.sender, object.receiver, object.messageText, object.datetime]);
-	}); 
+
+	function contains(a, obj) {
+		for (var i = 0; i < a.length; i++) {
+			if (a[i][0] === obj[0] && a[i][1] === obj[1]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	socket.on('add friend', function(object) {
-		if (object.friend in users) {
+		if (object.friend in users && !contains(friendships, [object.username, object.friend])) {
 			friendships.push([object.username, object.friend]);
 			socket.emit('added friend', {friend: object.friend, status: users[object.friend] === null ? false:true});
 		}
-		else {
+		else if (!object.friend in users) {
 			socket.emit('no such member');
 		}
+		else if (contains(friendships, [object.username, object.friend])) {
+			socket.emit('already friends');
+		}
 	});
+
+	socket.on('send message', function(object) {
+		messages.push([object.senderUsername, object.receiver, object.messageText, object.datetime]);
+
+		var messageObject = {
+			senderUsername: object.senderUsername,
+			receiver: object.receiver,
+			messageText: object.messageText,
+			datetime: object.datetime
+		}
+
+		// send to sender socket;
+		var senderSocket = users[object.senderUsername];
+		senderSocket.emit('receive message', messageObject);
+		// send to receiver socket
+		var receiverSocket = users[object.receiver];
+		receiverSocket.emit('receive message', messageObject);
+	});
+
+	socket.on('get history', function(object) {
+		var userMessages = [];
+		for(var i = 0; i < messages.length; i++) {
+			if((messages[i][0] === object.sender && messages[i][1] === object.receiver) || (messages[i][0] === object.receiver && messages[i][1] === object.sender)) {
+				userMessages.push(messages[i]);
+			}
+		}
+		socket.emit('receive history', userMessages);
+	});
+
 	socket.on('logout', function(object) {
 		users[object.username] = null;
 		for (i = 0; i < friendships.length; i++) {
