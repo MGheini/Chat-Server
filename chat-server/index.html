@@ -15,7 +15,7 @@
           View Your Account
       </div>
       <div class="ui input focus content">
-          <p><input id="full-name" type="text" placeholder="Full Name" style="margin-left: 145px"></p>
+          <p><input id="fullname" type="text" placeholder="Full Name" style="margin-left: 145px"></p>
           <p><input id="username" type="text" placeholder="Username" style="margin-left: 145px"></p>
       </div>
       <div class="actions">
@@ -25,9 +25,15 @@
     </div>
 </div>
 
-<div id="error-msg" class="ui negative message" style="width: 500px; margin: auto; margin-top: 20px; visibility: hidden;">
+<div id="error-msg1" class="ui negative message" style="width: 500px; margin: auto; margin-top: 20px; visibility: hidden;">
   <div class="header" style="text-align: center;">
     Sorry, but no member with the entered username was found
+</div>
+</div>
+
+<div id="error-msg2" class="ui negative message" style="width: 500px; margin: auto; margin-top: 20px; visibility: hidden;">
+  <div class="header" style="text-align: center;">
+    You are already friends!
 </div>
 </div>
 
@@ -49,6 +55,7 @@
                     <i class="user icon"></i>
                 </div>
             </div>
+            <!-- Friends go here -->
         </div>
     </div>
 
@@ -64,21 +71,8 @@
         </div>
 
         <div id="messages">
-            <div class="ui minimal comments">
-                <div class="comment">
-                    <a class="avatar">
-                        <img src="static/avatars/1.jpg">
-                    </a>
-                    <div class="content">
-                        <a class="author">Sadjad</a>
-                        <div class="metadata">
-                            <span class="date">Today at 5:42PM</span>
-                        </div>
-                        <div class="text">
-                            Jane, did you see the project definition?
-                        </div>
-                    </div>
-                </div>
+            <div id="message-pane" class="ui minimal comments">
+                <!-- Conversation goes here -->
             </div>
         </div>
 
@@ -100,8 +94,11 @@
 <script>
     var socket = io();
 
-    var fullName = document.getElementById('full-name');
+    var fullName = document.getElementById('fullname');
     var username = document.getElementById('username');
+    var receiverUsername = document.getElementById('receiver');
+    var messageText = document.getElementById('message-text');
+    var messagePane = document.getElementById('message-pane');
 
     $('#login').click(function() {
         $('.modal').modal('hide');
@@ -116,24 +113,31 @@
 
     socket.on('login', function(object) {
         for (i = 0; i < object.friends.length; i++) {
-            var friendItem = document.createElement('a');
+            var friend = document.createElement('a');
             if (object.friends[i].status === true)
-                friendItem.className = 'active green item';
+                friend.className = 'active green item friend';
             else
-                friendItem.className = 'blue item';
+                friend.className = 'blue item friend';
             var friendId = document.createTextNode(object.friends[i].friend);
-            friendItem.appendChild(friendId);
-            document.getElementById('roster').appendChild(friendItem);
+            friend.appendChild(friendId);
+            document.getElementById('roster').appendChild(friend);
+
+            friend.addEventListener('click', function(e) {
+                var friendName = this.innerHTML;
+                document.getElementById('receiver').innerHTML = friendName;
+                var chatObject = {
+                    sender: username.value,
+                    receiver: friendName
+                }
+                socket.emit('get history', chatObject);
+            });
         }
     });
 
-    $('#send').click(function(){
-        var receiverUsername = document.getElementById('receiver');
-        var messageText = document.getElementById('message-text');
-
+    $('#send').click(function() {
         if (messageText.value) {
             var messageObject = {
-                sender: username.value,
+                senderUsername: username.value,
                 receiver: receiverUsername.innerHTML,
                 messageText: messageText.value,
                 datetime: new Date().toUTCString()
@@ -141,6 +145,18 @@
             messageText.value = "";
             socket.emit('send message', messageObject);
         }
+    });
+
+    socket.on('receive message', function(object) {
+        messagePane.innerHTML += "<div class=\"comment\"><a class=\"avatar\"><img src=\"static/avatars/1.jpg\"></a>"
+        + "<div class=\"content\">"
+        + "<a class=\"author\">"
+        + object.senderUsername
+        + "</a><div class=\"metadata\"><span class=\"date\">"
+        + object.datetime
+        + "</span></div><div class=\"text\">"
+        + object.messageText
+        + "</div></div></div>";
     });
 
     document.getElementById('new-friend').onkeypress = function(e) {
@@ -161,16 +177,50 @@
     socket.on('added friend', function(object) {
         var friend = document.createElement('a');
         if (object.status === true)
-            friend.className = 'active green item';
+            friend.className = 'active green item friend';
         else
-            friend.className = 'blue item';
+            friend.className = 'blue item friend';
         var friendId = document.createTextNode(object.friend);
         friend.appendChild(friendId);
         document.getElementById('roster').appendChild(friend);
+
+        friend.addEventListener('click', function(e) {
+            var friendName = this.innerHTML;
+            document.getElementById('receiver').innerHTML = friendName;
+            var chatHistoryObject = {
+                sender: username.value,
+                receiver: friendName
+            }
+            socket.emit('get history', chatHistoryObject);
+        });
+    });
+
+    socket.on('receive history', function(messages) {
+        messagePane.innerHTML = "";
+
+        for(var i = 0; i < messages.length; i++) {
+            messagePane.innerHTML += "<div class=\"comment\"><a class=\"avatar\"><img src=\"static/avatars/1.jpg\"></a>"
+            + "<div class=\"content\">"
+            + "<a class=\"author\">"
+            + messages[i][0]
+            + "</a><div class=\"metadata\"><span class=\"date\">"
+            + messages[i][3]
+            + "</span></div><div class=\"text\">"
+            + messages[i][2]
+            + "</div></div></div>";
+        }
     });
 
     socket.on('no such member', function() {
-        var error = document.getElementById('error-msg');
+        var error = document.getElementById('error-msg1');
+        error.style.visibility = 'visible';
+        setTimeout(function() {
+            error.style.visibility = 'hidden';
+        }, 3000);
+    });
+
+    socket.on('already friends', function() {
+        var error = document.getElementById('error-msg2');
         error.style.visibility = 'visible';
         setTimeout(function() {
             error.style.visibility = 'hidden';
@@ -178,7 +228,7 @@
     });
 
     socket.on('online friend', function(object) {
-        $( 'a.blue.item' ).each( function(){
+        $( 'a.blue.item' ).each( function() {
             if ($( this ).text() === object.friend) {
                 $ ( this ).attr('class', 'active green item');
             }
@@ -186,14 +236,14 @@
     });
 
     socket.on('offline friend', function(object) {
-        $( 'a.green.item' ).each( function(){
+        $( 'a.green.item' ).each( function() {
             if ($( this ).text() === object.friend) {
                 $( this ).attr('class', 'blue item');
             }
         });
-    });    
+    });
 
-    $(window).on("beforeunload", function(object) { 
+    $(window).on("beforeunload", function(object) {
         var userDataObject = {
             username: username.value
         }
