@@ -142,10 +142,33 @@ socket.on('login', function(object) {
             friend.className = 'blue item friend';
         var friendId = document.createTextNode(object.friends[i].friend);
         friend.appendChild(friendId);
+        var unseenNotif = document.createElement('div');
+        unseenNotif.className = 'ui blue label';
+        var found = false;
+        for(j = 0; j < object.notifs.length; j++) {
+            if (object.notifs[j].friend === object.friends[i].friend) {
+                var unseenNum = document.createTextNode(object.notifs[j].unseenNum.toString());
+                // if (object.notifs[j].unseenNum === 0)
+                //     unseenNotif.style.visibility = 'hidden';
+                // else
+                //     unseenNotif.style.visibility = 'visible';
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            var unseenNum = document.createTextNode("0");
+        unseenNotif.appendChild(unseenNum);
+        friend.appendChild(unseenNotif);
         document.getElementById('roster').appendChild(friend);
+        if (unseenNotif.innerHTML === "0")
+            unseenNotif.style.visibility = 'hidden';
+        else
+            unseenNotif.style.visibility = 'visible';
         friend.addEventListener('click', function(e) {
-            var friendName = this.innerHTML;
+            var friendName = this.firstChild.textContent;
             document.getElementById('receiver').innerHTML = friendName;
+            socket.emit('open tab', {sender: username.value, receiver: friendName});
             var chatObject = {
                 sender: username.value,
                 receiver: friendName
@@ -154,15 +177,18 @@ socket.on('login', function(object) {
                 document.getElementById('last-online').innerHTML = "Online";
             else
                 document.getElementById('last-online').innerHTML = "Last online at " + object.lastOnline[friendName];
+            this.lastChild.innerHTML = "0";
+            this.lastChild.style.visibility = 'hidden';
             socket.emit('get history', chatObject);
         });
     }
 });
+
 $('#send').click(function() {
     if (messageText.value) {
         var messageObject = {
             senderUsername: username.value,
-            receiver: receiverUsername.innerHTML,
+            //receiver: receiverUsername.innerHTML,
             messageText: messageText.value,
             datetime: new Date().toUTCString()
         }
@@ -175,7 +201,7 @@ socket.on('receive message myself', function(object) {
     messagePane.innerHTML += "<div class=\"comment\"><a class=\"avatar\"><img src=\"static/avatars/1.jpg\"></a>"
     + "<div class=\"content\">"
     + "<a class=\"author\">"
-    + object.senderUsername
+    + username.value
     + "</a><div class=\"metadata\"><span class=\"date\">"
     + object.datetime
     + "</span></div><div class=\"text\">"
@@ -183,23 +209,32 @@ socket.on('receive message myself', function(object) {
     + "</div></div></div>";
 });
 
-
-
-
 socket.on('receive message other', function(object) {
     var seen = false;
-    if (receiverUsername.innerHTML === object.senderUsername) {
+    if (object.openTab === object.sender) {
             // if on the message pane of the sender ...
             messagePane.innerHTML += "<div class=\"comment\"><a class=\"avatar\"><img src=\"static/avatars/1.jpg\"></a>"
             + "<div class=\"content\">"
             + "<a class=\"author\">"
-            + object.senderUsername
+            + object.sender
             + "</a><div class=\"metadata\"><span class=\"date\">"
             + object.datetime
             + "</span></div><div class=\"text\">"
             + object.messageText
             + "</div></div></div>";
         }
+        else {
+            $( 'a.item' ).each( function() {
+                var text = $( this ).contents().filter(function() {
+                  return this.nodeType == 3;
+              }).text();
+                if (text === object.sender) {
+                    $( this ).children('div').text(parseInt($( this ).children('div').text()) + 1);
+                    $( this ).children('div').css('visibility', 'visible');
+                }
+            });
+            socket.emit('inc unseen msgs', {sender: object.sender, receiver: object.receiver});
+        }    
         vis(function() {
 
             if(vis()) {
@@ -207,11 +242,11 @@ socket.on('receive message other', function(object) {
 
             } else if (!seen){
                 // do something - tab is invisible
-                notify(object.senderUsername, object.messageText);
+                notify(object.sender, object.messageText);
                 seen = true;
             }
+        });
     });
-});
 
 document.getElementById('new-friend').onkeypress = function(e) {
     if (!e) e = window.event;
@@ -227,6 +262,7 @@ document.getElementById('new-friend').onkeypress = function(e) {
         return false;
     }
 }
+
 socket.on('added friend', function(object) {
     var friend = document.createElement('a');
     if (object.status === true)
@@ -235,11 +271,21 @@ socket.on('added friend', function(object) {
         friend.className = 'blue item friend';
     var friendId = document.createTextNode(object.friend);
     friend.appendChild(friendId);
+    var unseenNotif = document.createElement('div');
+    unseenNotif.className = 'ui blue label';
+    var unseenNum = document.createTextNode(object.notif.toString());
+    if (object.notif === 0) 
+        unseenNotif.style.visibility = 'hidden';
+    else
+        unseenNotif.style.visibility = 'visible';
+    unseenNotif.appendChild(unseenNum);
+    friend.appendChild(unseenNotif);
     document.getElementById('roster').appendChild(friend);
     friend.addEventListener('click', function(e) {
-        var friendName = this.innerHTML;
+        var friendName = this.firstChild.textContent;
         document.getElementById('receiver').innerHTML = friendName;
-        var chatHistoryObject = {
+        socket.emit('open tab', {sender: username.value, receiver: friendName});
+        var chatObject = {
             sender: username.value,
             receiver: friendName
         }
@@ -247,9 +293,12 @@ socket.on('added friend', function(object) {
             document.getElementById('last-online').innerHTML = "Online";
         else
             document.getElementById('last-online').innerHTML = "Last online at " + object.lastOnline[friendName];
-        socket.emit('get history', chatHistoryObject);
+        this.lastChild.innerHTML = "0";
+        this.lastChild.style.visibility = 'hidden';
+        socket.emit('get history', chatObject);
     });
 });
+
 socket.on('receive history', function(messages) {
     messagePane.innerHTML = "";
     for(var i = 0; i < messages.length; i++) {
@@ -264,6 +313,7 @@ socket.on('receive history', function(messages) {
         + "</div></div></div>";
     }
 });
+
 socket.on('no such member', function() {
     var error = document.getElementById('error-msg1');
     error.style.visibility = 'visible';
@@ -271,6 +321,7 @@ socket.on('no such member', function() {
         error.style.visibility = 'hidden';
     }, 3000);
 });
+
 socket.on('already friends', function() {
     var error = document.getElementById('error-msg2');
     error.style.visibility = 'visible';
@@ -278,21 +329,34 @@ socket.on('already friends', function() {
         error.style.visibility = 'hidden';
     }, 3000);
 });
+
 socket.on('online friend', function(object) {
     $( 'a.blue.item' ).each( function() {
-        if ($( this ).text() === object.friend) {
-            $ ( this ).attr('class', 'active green item');
+        var text = $( this ).contents().filter(function() {
+          return this.nodeType == 3;
+      }).text();
+        if (text === object.friend) {
+            $ ( this ).attr('class', 'active green item friend');
         }
     });
+    if (object.openTab === object.friend)
+        document.getElementById('last-online').innerHTML = "Online";
 });
+
 socket.on('offline friend', function(object) {
     $( 'a.green.item' ).each( function() {
-        if ($( this ).text() === object.friend) {
-            $( this ).attr('class', 'blue item');
+        var text = $( this ).contents().filter(function() {
+          return this.nodeType == 3;
+      }).text();
+        if (text === object.friend) {
+            $( this ).attr('class', 'blue item friend');
         }
     });
+    if (object.openTab === object.friend)
+        document.getElementById('last-online').innerHTML = "Last online at " + object.lastOnline[object.friend];;
 });
-$(window).on("beforeunload", function(object) {
+
+$(window).on('beforeunload', function(object) {
     var userDataObject = {
         username: username.value
     }
@@ -322,7 +386,6 @@ function notify(msgSender, msg) {
         }
     }
 }
-
 </script>
 </body>
 </html>
