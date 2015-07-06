@@ -66,6 +66,9 @@ io.on('connection', function(socket) {
 		else if (contains(friendships, [object.username, object.friend])) {
 			socket.emit('already friends');
 		}
+		else if (object.friend === object.username) {
+			socket.emit('cannot add yourself');
+		}
 	});
 
 	socket.on('send message', function(object) {
