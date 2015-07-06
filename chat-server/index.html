@@ -98,35 +98,28 @@
 <script src="static/js/jquery-2.1.4.min.js"></script>
 <script src="static/semantic/semantic.min.js"></script>
 <script>
-// main visibility API function 
-// use visibility API to check if current tab is active or not
-var vis = (function(){
-    var stateKey, 
-    eventKey, 
-    keys = {
-        hidden: "visibilitychange",
-        webkitHidden: "webkitvisibilitychange",
-        mozHidden: "mozvisibilitychange",
-        msHidden: "msvisibilitychange"
-    };
-    for (stateKey in keys) {
-        if (stateKey in document) {
-            eventKey = keys[stateKey];
-            break;
-        }
-    }
-    return function(c) {
-        if (c) document.addEventListener(eventKey, c);
-        return !document[stateKey];
-    }
-})();
-
 var socket = io();
 var fullName = document.getElementById('fullname');
 var username = document.getElementById('username');
 var receiverUsername = document.getElementById('receiver');
 var messageText = document.getElementById('message-text');
 var messagePane = document.getElementById('message-pane');
+
+// detect inactive tab or window
+var has_blurred = 0;
+function hasBlurred()
+{
+    has_blurred = 1;
+}
+window.onblur = hasBlurred;
+
+// detect active tab or window
+function hasFocus()
+{
+    if( has_blurred )
+        has_blurred = 0; // reset has_blurred state
+}
+window.onfocus = hasFocus;
 
 $('#login').click(function() {
     $('.modal').modal('hide');
@@ -216,7 +209,6 @@ socket.on('receive message myself', function(object) {
 });
 
 socket.on('receive message other', function(object) {
-    var seen = false;
     if (object.openTab === object.sender) {
             // if on the message pane of the sender ...
             messagePane.innerHTML += "<div class=\"comment\"><a class=\"avatar\"><img src=\"static/avatars/1.jpg\"></a>"
@@ -240,18 +232,12 @@ socket.on('receive message other', function(object) {
                 }
             });
             socket.emit('inc unseen msgs', {sender: object.sender, receiver: object.receiver});
-        }    
-        vis(function() {
-
-            if(vis()) {
-                // do nothing - tab is visible
-
-            } else if (!seen){
-                // do something - tab is invisible
-                notify(object.sender, object.messageText);
-                seen = true;
-            }
-        });
+        }
+        if (has_blurred) {
+            notify(object.sender, object.messageText);
+            console.log("=====>");
+            console.log(object.sender+"\n"+object.messageText);
+        }
     });
 
 document.getElementById('new-friend').onkeypress = function(e) {
