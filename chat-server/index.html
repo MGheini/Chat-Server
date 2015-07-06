@@ -26,15 +26,21 @@
 </div>
 
 <div id="error-msg1" class="ui negative message" style="width: 500px; margin: auto; margin-top: 20px; visibility: hidden;">
-  <div class="header" style="text-align: center;">
-    Sorry, but no member with the entered username was found
-</div>
+    <div class="header" style="text-align: center;">
+        Sorry, but no member with the entered username was found
+    </div>
 </div>
 
 <div id="error-msg2" class="ui negative message" style="width: 500px; margin: auto; margin-top: 20px; visibility: hidden;">
-  <div class="header" style="text-align: center;">
-    You are already friends!
+    <div class="header" style="text-align: center;">
+        You are already friends!
+    </div>
 </div>
+
+<div id="error-msg3" class="ui negative message" style="width: 500px; margin: auto; margin-top: 20px; visibility: hidden;">
+    <div class="header" style="text-align: center;">
+        You cannot add yourself!
+    </div>
 </div>
 
 <div id="container" class="ui grid">
@@ -324,6 +330,14 @@ socket.on('no such member', function() {
 
 socket.on('already friends', function() {
     var error = document.getElementById('error-msg2');
+    error.style.visibility = 'visible';
+    setTimeout(function() {
+        error.style.visibility = 'hidden';
+    }, 3000);
+});
+
+socket.on('cannot add yourself', function() {
+    var error = document.getElementById('error-msg3');
     error.style.visibility = 'visible';
     setTimeout(function() {
         error.style.visibility = 'hidden';
